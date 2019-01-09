@@ -13,12 +13,12 @@ import com.cg.app.account.SavingsAccount;
 import com.cg.app.exception.AccountNotFoundException;
 import com.cg.app.mapper.SavingsAccountDAOMapper;
 import com.cg.app.util.DBUtil;
+
 @Repository
 public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 	@Autowired
 	private JdbcTemplate template;
-	
-	
+
 	public SavingsAccount createNewAccount(SavingsAccount account) throws ClassNotFoundException, SQLException {
 		/*
 		 * Connection connection = DBUtil.getConnection(); PreparedStatement
@@ -34,14 +34,9 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * DBUtil.commit();
 		 */
 		template.update("INSERT INTO ACCOUNT(account_hn,account_bal,salary,od_limit,account_type) VALUES(?,?,?,?,?)",
-				new Object[] {
-						account.getBankAccount().getAccountHolderName(),
-						account.getBankAccount().getAccountBalance(),
-						account.isSalary(),
-						null,
-						"SA"}
-				);
-				
+				new Object[] { account.getBankAccount().getAccountHolderName(),
+						account.getBankAccount().getAccountBalance(), account.isSalary(), null, "SA" });
+
 		return account;
 	}
 
@@ -59,7 +54,7 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * savingsAccounts.add(savingsAccount); } DBUtil.commit();
 		 */
 		return template.query("SELECT * FROM ACCOUNT", new SavingsAccountDAOMapper());
-		
+
 	}
 
 	public void updateBalance(int accountNumber, double currentBalance) throws ClassNotFoundException, SQLException {
@@ -89,7 +84,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * AccountNotFoundException("Account with account number " + accountNumber +
 		 * " does not exist.");
 		 */
-		return template.queryForObject("SELECT * FROM account where account_id=?",new Object[] {accountNumber} ,new SavingsAccountDAOMapper());
+		return template.queryForObject("SELECT * FROM account where account_id=?", new Object[] { accountNumber },
+				new SavingsAccountDAOMapper());
 	}
 
 	public boolean updateAccount(SavingsAccount account) throws SQLException, ClassNotFoundException {
@@ -107,10 +103,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * DBUtil.commit(); }
 		 */
 		template.update("UPDATE account SET account_hn=?,salary=? WHERE account_id=?",
-				new Object[] {account.getBankAccount().getAccountHolderName(),
-						account.isSalary(),
-						account.getBankAccount().getAccountNumber()}
-				);
+				new Object[] { account.getBankAccount().getAccountHolderName(), account.isSalary(),
+						account.getBankAccount().getAccountNumber() });
 		return false;
 
 	}
@@ -126,7 +120,7 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * preparedStatement.setInt(1, accountNumber); preparedStatement.execute();
 		 * DBUtil.commit(); }
 		 */
-		template.update("DELETE  FROM account WHERE account_id=?", new Object[] {accountNumber});
+		template.update("DELETE  FROM account WHERE account_id=?", new Object[] { accountNumber });
 		return null;
 	}
 
@@ -144,14 +138,14 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * 
 		 * return accountBalance; }
 		 */
-		
-		
-		
-		  double balance =
-		  template.queryForObject("SELECT account_bal FROM account WHERE account_id=?",
-		new Object[] {accountNumber}, Double.class); /*List<String> names =
-		 * template.queryForList("Select accountHN from account", String.class);*/
-		  return balance;
+
+		double balance = template.queryForObject("SELECT account_bal FROM account WHERE account_id=?",
+				new Object[] { accountNumber },
+				Double.class); /*
+								 * List<String> names = template.queryForList("Select accountHN from account",
+								 * String.class);
+								 */
+		return balance;
 
 	}
 
@@ -168,8 +162,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * savingsAccount = new SavingsAccount(accountNumber, accountHolderName,
 		 * accountBalance, salary); return savingsAccount; } DBUtil.commit();
 		 */
-		template.queryForObject("SELECT * FROM account WHERE account_id=?", new Object[] {accountNumber},SavingsAccount.class);
-		return null;
+		return template.queryForObject("SELECT * FROM account WHERE account_id=?", new Object[] { accountNumber },
+				new SavingsAccountDAOMapper());
 	}
 
 	public List<SavingsAccount> searchAccountByHolderName(String holderName)
@@ -190,7 +184,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * 
 		 * } DBUtil.commit();
 		 */
-		return template.query("SELECT * FROM account WHERE account_hn=?",new Object[] {holderName}, new SavingsAccountDAOMapper());
+		return template.query("SELECT * FROM account WHERE account_hn=?", new Object[] { holderName },
+				new SavingsAccountDAOMapper());
 	}
 
 	public List<SavingsAccount> sortByAccountHolderName() throws ClassNotFoundException, SQLException {
@@ -259,7 +254,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * accountHolderName, accountBalance, salary);
 		 * savingsAccountList.add(savingsAccount); } DBUtil.commit();
 		 */
-		return template.query("SELECT * FROM account WHERE account_bal BETWEEN ? and ? ORDER BY account_bal", new Object[] {minimumBalance,maximumBalance},new SavingsAccountDAOMapper());
+		return template.query("SELECT * FROM account WHERE account_bal BETWEEN ? and ? ORDER BY account_bal",
+				new Object[] { minimumBalance, maximumBalance }, new SavingsAccountDAOMapper());
 	}
 
 	public List<SavingsAccount> sortByBalanceRangeInDescendingOrder(int minimumBalanceValue, int maximumBalanceValue)
@@ -279,7 +275,8 @@ public class SavingsAccountDAOImpl implements SavingsAccountDAO {
 		 * accountHolderName, accountBalance, salary);
 		 * savingsAccountList.add(savingsAccount); } DBUtil.commit();
 		 */
-		return template.query("SELECT * FROM account WHERE account_bal BETWEEN ? and ? ORDER BY account_bal DESC", new Object[] {minimumBalanceValue,maximumBalanceValue},new SavingsAccountDAOMapper());
+		return template.query("SELECT * FROM account WHERE account_bal BETWEEN ? and ? ORDER BY account_bal DESC",
+				new Object[] { minimumBalanceValue, maximumBalanceValue }, new SavingsAccountDAOMapper());
 	}
 
 	public void commit() throws SQLException {
